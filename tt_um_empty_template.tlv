@@ -3,11 +3,11 @@
    use(m5-1.0)
    
    
-   // #################################################################
-   // #                                                               #
-   // #  Starting-Point Code for MEST Course Tiny Tapeout Calculator  #
-   // #                                                               #
-   // #################################################################
+   // ########################################################
+   // #                                                      #
+   // #  Empty template for Tiny Tapeout Makerchip Projects  #
+   // #                                                      #
+   // ########################################################
    
    // ========
    // Settings
@@ -20,8 +20,8 @@
    //   o Use first line of file: \m5_TLV_version 1d --inlineGen --noDirectiveComments --noline --clkAlways --bestsv --debugSigsYosys: tl-x.org
    //   o set(MAKERCHIP, 0)
    //   o var(target, FPGA)  // or ASIC
-   //set(MAKERCHIP, 0)
-   var(my_design, tt_um_template)
+   //set(MAKERCHIP, 0)   /// 1 (or commented out) for simulating in Makerchip.
+   var(my_design, tt_um_template)   /// The name of your top-level TT module, to match your info.yml.
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
@@ -42,7 +42,7 @@
    m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])
 
 
-\TLV calc()
+\TLV my_design()
    
    
    
@@ -73,7 +73,7 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    // Tiny tapeout I/O signals.
    logic [7:0] ui_in, uo_out;
    m5_if_neq(m5_target, FPGA, ['logic [7:0]uio_in,  uio_out, uio_oe;'])
-   logic [31:0] r;
+   logic [31:0] r;  // a random value
    always @(posedge clk) r <= m5_if(m5_MAKERCHIP, ['$urandom()'], ['0']);
    assign ui_in = r[7:0];
    m5_if_neq(m5_target, FPGA, ['assign uio_in = 8'b0;'])
@@ -132,9 +132,9 @@ module m5_user_module_name (
    m5+tt_connections()
    
    // Instantiate the Virtual FPGA Lab.
-   m5+board(/top, /fpga, 7, $, , calc)
+   m5+board(/top, /fpga, 7, $, , my_design)
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   m5+tt_input_labels_viz(['"Value[0]", "Value[1]", "Value[2]", "Value[3]", "Op[0]", "Op[1]", "Op[2]", "="'])
+   m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])
 
 \SV
 endmodule
