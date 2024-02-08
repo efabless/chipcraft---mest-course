@@ -56,7 +56,7 @@
    
    |pipe
       @-1
-         $reset = *reset;
+         $reset = *reset || *ui_in[7];
       @0
          m5_var(SeqWidth, m5_if(m5_MAKERCHIP, 3, 22))
          $row[3:0] = ~(*ui_in[3:0]);
