@@ -41,47 +41,67 @@
    // Include Tiny Tapeout Lab.
    m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])
 
+// In:
+//   $_ready: Able to receive a button press.
+// Out:
+//   /_name$button_pressed: [boolean] Was a button/key pressed?
+//   /_name$digit_pressed[3:0]: Hex digit pressed, if $button_pressed, held until the next $button_pressed.
+// Params:
+//   /_top
+//   /_name
+//   $_pmod_in: The name and range of the output signal that drives the Pmod input.
+//   $_pmod_out: The name and range of the input signal that receives the Pmod output.
+\TLV PmodKYPD(/_top, /_name, $_pmod_in, $_pmod_out, $_ready)
+   /_name
+      $reset = /_top$reset;
+      
+      // Connect the Pmod to uo_out[3:0] and ui_in[3:0].
+      $_pmod_in = 4'b1 << $Col;
+      $row[3:0] = $_pmod_out;
+      // Run fast in Makerchip simulation.
+      m5_var(SeqWidth, m5_if(m5_MAKERCHIP, 3, 10)) /// 22 for 1/4 sec per poll
 
+      // Determine when to update column keypad input
+      // and when to sample keypad output.
+      $Seq[m5_calc(m5_SeqWidth - 1):0] <=
+         $reset ? 0 : $Seq + 1;
+      $update = $Seq == 0;
+      $sample = $Seq == ~ m5_SeqWidth'b0;
+
+      // Update column keypad input.
+      $Col[1:0] <=
+         $reset  ? 2'b0 :
+         $update ? $Col + 2'b1 :
+                   $RETAIN;
+      // Update button states for the selected column.
+      $sample_mask[15:0] =
+         $reset  ? 16'b0 :
+         $sample ? {$Col == 2'h3 ? $row : $Button[15:12],
+                    $Col == 2'h2 ? $row : $Button[11:8],
+                    $Col == 2'h1 ? $row : $Button[7:4],
+                    $Col == 2'h0 ? $row : $Button[3:0]} :
+                   $Button;
+      $Button[15:0] <= $next_mask;
+
+      // Check one button at a time.
+      //
+      // Can only reset to zero, so have to start with encoded count.
+      $CheckButton[3:0] <= $reset ? 4'h0 : $CheckButton + 4'h1;
+      $check_mask[15:0] = 16'b1 << $CheckButton;
+      // Has the check button been pressed and not reported.
+      $button_pressed = | ($Button & $check_mask);
+      $digits[63:0] = 64'h123A_456B_789C_0FED;
+      $digit_pressed[3:0] = $button_pressed ? $digits[($CheckButton * 4) +: 4] : $RETAIN;
+      $next_mask[15:0] = $_ready & $button_pressed ? $sample_mask & ~ $check_mask : $sample_mask;
+      
 \TLV my_design()
-   
-   
-   
-   // ==================
-   // |                |
-   // | YOUR CODE HERE |
-   // |                |
-   // ==================
-   
-   // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
-   
    |pipe
       @-1
          $reset = *reset || *ui_in[7];
       @0
-         m5_var(SeqWidth, m5_if(m5_MAKERCHIP, 3, 22))
-         $row[3:0] = ~(*ui_in[3:0]);
-         *uo_out = {$LastButton, ~(4'b1 << $Col)};
-         $reset_falls = ! $reset && >>1$reset;
-         $ResetFell <= $reset_falls || $ResetFell;
-         $Seq[m5_calc(m5_SeqWidth - 1):0] <=
-            $reset ? 0 : $Seq + 1;
-         $update = $Seq == 0;
-         $sample = $Seq == ~ m5_SeqWidth'b0;
-         $Col[1:0] <=
-            $reset  ? 2'b0 :
-            $update ? $Col + 2'b1 :
-                      $RETAIN;
-         $Button[15:0] <=
-            $reset  ? 16'b0 :
-            $sample ? {$Col == 2'h3 ? $row : $Button[15:12],
-                       $Col == 2'h2 ? $row : $Button[11:8],
-                       $Col == 2'h1 ? $row : $Button[7:4],
-                       $Col == 2'h0 ? $row : $Button[3:0]} :
-                      $RETAIN;
-         // Check for one button each cycle.
-         $ButtonCnt[3:0] <= $reset ? 4'h0 : $ButtonCnt + 4'h1;
-         $LastButton[3:0] <= $reset ? 4'h5 : $Button[$ButtonCnt] ? $ButtonCnt : $LastButton;
-   
+         m5+PmodKYPD(|pipe, /keypad, *uo_out[3:0], *ui_in[3:0], 1'b1)
+         m5+sseg_decoder($segments, /keypad$digit_pressed)
+         *uo_out[7:4] = {1'b0, $segments[6:4]};
    
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
    m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
