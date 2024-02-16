@@ -2,7 +2,8 @@
 \m5
    use(m5-1.0)
    
-   
+   m4_include_lib(https:/['']/raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/calculator_shell_lib.tlv)
+
    // #################################################################
    // #                                                               #
    // #  Starting-Point Code for MEST Course Tiny Tapeout Calculator  #
