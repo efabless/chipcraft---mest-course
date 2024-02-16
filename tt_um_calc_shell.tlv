@@ -55,7 +55,8 @@
    // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
    
    
-   
+
+   m5+cal_viz(@2, /fpga)
    
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
    *uo_out = 8'b0;
