@@ -17,10 +17,13 @@
    //
    // To build within Makerchip for the FPGA or ASIC:
    //   o Use first line of file: \m5_TLV_version 1d --inlineGen --noDirectiveComments --noline --clkAlways --bestsv --debugSigsYosys: tl-x.org
-   //   o set(MAKERCHIP, 0)
-   //   o var(target, FPGA)  // or ASIC
-   //set(MAKERCHIP, 0)
-   var(my_design, tt_um_template)
+   //   o set(MAKERCHIP, 0)  // (below)
+   //   o For ASIC, set my_design (below) to match the configuration of your repositoy:
+   //       - tt_um_fpga_hdl_demo for tt_fpga_hdl_demo repo
+   //       - tt_um_example for tt06_verilog_template repo
+   //   o var(target, FPGA)  // or ASIC (below)
+   set(MAKERCHIP, 1)   /// 1 for simulating in Makerchip.
+   var(my_design, tt_um_template)   /// The name of your top-level TT module, to match your info.yml.
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
