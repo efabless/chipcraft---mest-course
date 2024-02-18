@@ -2,6 +2,8 @@
 
 This repository contains materials for the course: ["ChipCraft: The Art of Chip Design for Non-Experts"](https://mestcenter.org/training/chipcraft/), offered by the [National Micro-Electronics Security Training Center](https://mestcenter.org/) in partnership with [Efabless](https://efabless.com) and [Redwood EDA](https://redwoodeda.com).
 
+Special thanks also to the [Tiny Tapeout](https://tinytapeout.com/) team and thousands of open-source contributors for making this experience possible.
+
 ## Course Materials
 
  - [Syllabus](https://docs.google.com/document/d/e/2PACX-1vT9sxLEmr5tBJa-iqrIkl3nRzpzeFxQqTq3HO2Ca641V6OKlTUJm3Xs8_QXYUcJNSR9KJfd8P1-gGXK/pub)
@@ -16,4 +18,3 @@ This repository contains materials for the course: ["ChipCraft: The Art of Chip 
    - [RISC-V Decode Tables](https://docs.google.com/presentation/d/e/2PACX-1vTAavhqbL1q3VkRy5IMeGo0KduYC4boXcRuPcFEBQUfoBmmJh05hM4l_Sonq_WtB742lvJWxooy-Rkt/pub?start=false&loop=false&delayms=3000)
    - [Human CPU Cards](https://docs.google.com/presentation/d/e/2PACX-1vTC-oWp7n1XpPzps6FyRAojMMI1YbHwFh8xmGP6xDu9fCBMn9WDAInwxt5RZGFFYC3SGwtXqMJb9m4J/pub?start=false&loop=false&delayms=3000)
    - [Wokwi Digital Project Template](https://wokwi.com/projects/354858054593504257)
-
