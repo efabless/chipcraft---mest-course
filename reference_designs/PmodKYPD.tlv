@@ -43,64 +43,90 @@
 
 // In:
 //   $_ready: Able to receive a button press.
+//   $_led_out: The chip output to PmodKYPD can be shared with led output values.
+//              Outputs will be drivn by PmodKYPD a small percentage of the time that is
+//              inperceptible to LEDs that share the output. This value is driven on $_pmod_out
+//              when PmodKYPD is not using them. Use 8'b0 is not used.
 // Out:
 //   /_name$button_pressed: [boolean] Was a button/key pressed?
-//   /_name$digit_pressed[3:0]: Hex digit pressed, if $button_pressed, held until the next $button_pressed.
+//   /_name$digit_pressed[3:0]: The hex digit pressed if $button_pressed, held until the next $button_pressed.
 // Params:
 //   /_top
 //   /_name
 //   $_pmod_in: The name and range of the output signal that drives the Pmod input.
 //   $_pmod_out: The name and range of the input signal that receives the Pmod output.
-\TLV PmodKYPD(/_top, /_name, $_pmod_in, $_pmod_out, $_ready)
+//   $_ready
+//   $_led_out
+\TLV PmodKYPD(/_top, /_name, $_pmod_in, $_pmod_out, $_ready, $_led_out)
    /_name
       $reset = /_top$reset;
       
       // Connect the Pmod to uo_out[3:0] and ui_in[3:0].
-      $_pmod_in = 4'b1 << $Col;
+      $_pmod_in = $sampling ? 4'b1 << $col : /_top$_led_out;
       $row[3:0] = $_pmod_out;
       // Run fast in Makerchip simulation.
-      m5_var(SeqWidth, m5_if(m5_MAKERCHIP, 3, 10)) /// 22 for 1/4 sec per poll
-
+      m5_var(SeqWidth, m5_if(m5_MAKERCHIP, 5, 12)) /// Number of bits counting one sample to the next. 22 for 1/4 sec per poll
+      m5_var(SampleWidth, m5_if(m5_MAKERCHIP, 2, 7))  /// Number of bits counting sample window.
+      
+      // Sample once every 2^m5_SeqWidth cycles.
+      // Sample input 2^m5_SampleWidth cycles after driving input.
+      // When not driving outputs, drive $_led_out.
       // Determine when to update column keypad input
       // and when to sample keypad output.
-      $Seq[m5_calc(m5_SeqWidth - 1):0] <=
+      $Seq[m5_calc(m5_SeqWidth - 1 + 2):0] <=
          $reset ? 0 : $Seq + 1;
-      $update = $Seq == 0;
-      $sample = $Seq == ~ m5_SeqWidth'b0;
+      $sampling = $Seq[m5_calc(m5_SeqWidth - 1):m5_SampleWidth] == m5_calc(m5_SeqWidth - m5_SampleWidth)'b0;
+      $sample = $sampling && $Seq[m5_calc(m5_SampleWidth - 1):0] == ~ m5_SampleWidth'b0;
 
       // Update column keypad input.
-      $Col[1:0] <=
-         $reset  ? 2'b0 :
-         $update ? $Col + 2'b1 :
-                   $RETAIN;
+      $col[1:0] = $Seq[m5_calc(m5_SeqWidth - 1 + 2):m5_SeqWidth];
+      
       // Update button states for the selected column.
-      $sample_mask[15:0] =
-         $reset  ? 16'b0 :
-         $sample ? {$Col == 2'h3 ? $row : $Button[15:12],
-                    $Col == 2'h2 ? $row : $Button[11:8],
-                    $Col == 2'h1 ? $row : $Button[7:4],
-                    $Col == 2'h0 ? $row : $Button[3:0]} :
+      $Button[15:0] <=
+         $reset ? 16'b0 :
+         $sample ? {$col == 2'h3 ? $row : $Button[15:12],
+                    $col == 2'h2 ? $row : $Button[11:8],
+                    $col == 2'h1 ? $row : $Button[7:4],
+                    $col == 2'h0 ? $row : $Button[3:0]} :
                    $Button;
-      $Button[15:0] <= $next_mask;
-
-      // Check one button at a time.
+      
       //
+      // Report pressed buttons (only once)
+      //
+      
+      // Check one button each cycle.
+      
+      // Pressed buttons that have been reported (to avoid reporting twice).
+      $Reported[15:0] <=
+         $reset
+            ? 16'b0 :
+         // default: button is pressed and not previously or just reported.
+              $Button & ($Reported | ($check_mask & {16{$report_button}}));
+      
       // Can only reset to zero, so have to start with encoded count.
-      $CheckButton[3:0] <= $reset ? 4'h0 : $CheckButton + 4'h1;
+      $CheckButton[3:0] <=
+         $reset
+            ? 4'h0 :
+         $_ready
+            ? $CheckButton + 4'h1 :
+         // default
+              $CheckButton;
       $check_mask[15:0] = 16'b1 << $CheckButton;
-      // Has the check button been pressed and not reported.
-      $button_pressed = | ($Button & $check_mask);
+      // Is the check button pressed and not reported.
+      $report_button = $_ready && | ($check_mask & $Button & ~ $Reported);
+      
+      // Report it.
       $digits[63:0] = 64'h123A_456B_789C_0FED;
-      $digit_pressed[3:0] = $button_pressed ? $digits[($CheckButton * 4) +: 4] : $RETAIN;
-      $next_mask[15:0] = $_ready & $button_pressed ? $sample_mask & ~ $check_mask : $sample_mask;
+      $digit_pressed[3:0] = $report_button ? $digits[($CheckButton * 4) +: 4] : $RETAIN;
       
 \TLV my_design()
    |pipe
       @-1
          $reset = *reset || *ui_in[7];
       @0
-         m5+PmodKYPD(|pipe, /keypad, *uo_out[3:0], *ui_in[3:0], 1'b1)
-         m5+sseg_decoder($segments, /keypad$digit_pressed)
+         m5+PmodKYPD(|pipe, /keypad, *uo_out[3:0], *ui_in[3:0], 1'b1, $segments[3:0])
+         m5+sseg_decoder($segments_n, /keypad$digit_pressed)
+         $segments[6:0] = ~ $segments_n;
          *uo_out[7:4] = {1'b0, $segments[6:4]};
    
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
@@ -120,7 +146,7 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    m5_if_neq(m5_target, FPGA, ['logic [7:0]uio_in,  uio_out, uio_oe;'])
    logic [31:0] r;  // a random value
    always @(posedge clk) r <= m5_if(m5_MAKERCHIP, ['$urandom()'], ['0']);
-   assign ui_in = r[7:0];
+   assign ui_in = 8'h02;
    m5_if_neq(m5_target, FPGA, ['assign uio_in = 8'b0;'])
    logic ena = 1'b0;
    logic rst_n = ! reset;
