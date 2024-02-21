@@ -25,7 +25,8 @@
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
-   var(debounce_inputs, 1)         /// 1: Provide synchronization and debouncing on all input signals.
+   // !!!!! Careful, the latency of debouncing is greater than the sample window.
+   var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
                                    /// 0: Don't provide synchronization and debouncing.
                                    /// m5_neq(m5_MAKERCHIP, 1): Debounce unless in Makerchip.
    
@@ -92,9 +93,10 @@
                                  $Seq[m5_calc(m5_FullSpeedSampleWidth - 1):0] == ~ m5_FullSpeedSampleWidth'b0;
 
          // Update column keypad input.
-         ?$sampling
-            $row_sel[1:0] = /_top$debug ? $Seq[m5_calc(         m5_SeqWidth - 1 + 2):         m5_SeqWidth] :
-                                          $Seq[m5_calc(m5_FullSpeedSeqWidth - 1 + 2):m5_FullSpeedSeqWidth];
+         $row_sel[1:0] = 4'h2;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         //?$sampling
+         //   $row_sel[1:0] = /_top$debug ? $Seq[m5_calc(         m5_SeqWidth - 1 + 2):         m5_SeqWidth] :
+         //                                 $Seq[m5_calc(m5_FullSpeedSeqWidth - 1 + 2):m5_FullSpeedSeqWidth];
          // Connect the Pmod to uo_out[3:0] and ui_in[3:0].
          $_pmod_in = $sampling ? 4'b1 << $row_sel : /_top$_led_out;
       @m4_stage_eval(@_first_stage + 1)
@@ -143,7 +145,7 @@
          // Report it.      
          $digits[63:0] = 64'h123A_456B_789C_0FED;
          //$digits[63:0] = 64'h1470_258F_369E_ABCD;
-         $digit_pressed[3:0] = $report_button ? $digits[($CheckButton * 4) +: 4] : $RETAIN;
+         $digit_pressed[3:0] = $reset ? "F" : $report_button ? $digits[($CheckButton * 4) +: 4] : $RETAIN;
 
          /row[3:0]
             \viz_js
