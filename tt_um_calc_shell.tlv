@@ -87,20 +87,6 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    logic ena = 1'b0;
    logic rst_n = ! reset;
    
-   /*
-   // Or, to provide specific inputs at specific times (as for lab C-TB) ...
-   // BE SURE TO COMMENT THE ASSIGNMENT OF INPUTS ABOVE.
-   // BE SURE TO DRIVE THESE ON THE B-PHASE OF THE CLOCK (ODD STEPS).
-   // Driving on the rising clock edge creates a race with the clock that has unpredictable simulation behavior.
-   initial begin
-      #1  // Drive inputs on the B-phase.
-         ui_in = 8'h0;
-      #10 // Step 5 cycles, past reset.
-         ui_in = 8'hFF;
-      // ...etc.
-   end
-   */
-
    // Instantiate the Tiny Tapeout module.
    m5_user_module_name tt(.*);
    
