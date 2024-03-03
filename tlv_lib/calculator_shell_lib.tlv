@@ -3,7 +3,7 @@
 
 \TLV cal_viz(@_stage, /_top)
    // Only for Makerchip.
-   m4_ifdef(['M4_MAKERCHIP'], ['m4+cal_viz_internal(['@_stage'], ['/_top'])'], [''])
+   m5_if_eq(m5_MAKERCHIP, 1, ['m4+cal_viz_internal(['@_stage'], ['/_top'])'], [''])
 
 // Visualization for calculator
 \TLV cal_viz_internal(@_stage, /_top)
