@@ -1,12 +1,14 @@
 \m5_TLV_version 1d --inlineGen --noDirectiveComments --noline --clkAlways --bestsv --debugSigsYosys: tl-x.org
+//
 \m5
+   /**
    use(m5-1.0)
    
    
    // #############################
    // #                           #
    // #  Controller for PmodKYPD  #
-   // #           (WIP)           #
+   // #                           #
    // #############################
    
    // ========
@@ -25,7 +27,7 @@
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
-   // !!!!! Careful, the latency of debouncing is greater than the sample window.
+   // !!!!! Careful, the latency of debouncing could be greater than the sample window.
    var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
                                    /// 0: Don't provide synchronization and debouncing.
                                    /// m5_neq(m5_MAKERCHIP, 1): Debounce unless in Makerchip.
@@ -37,31 +39,35 @@
    // If debouncing, a user's module is within a wrapper, so it has a different name.
    var(user_module_name, m5_if(m5_debounce_inputs, my_design, m5_my_design))
    var(debounce_cnt, m5_if_eq(m5_MAKERCHIP, 1, 8'h03, 8'hff))
-
+   **/
 \SV
    // Include Tiny Tapeout Lab.
-   m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])
+   ///m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])
 
+// A controller for PmodKYPD (keypad).
+//
+// The keypad is sampled one row at a time, a small fraction of the time. When sampling (/_name$sampling),
+// /_name$sample_row_mask[3:0] must be driven to PmodKYPD (via *uo_out). Otherwise, it does not matter what is driven
+// to PmodKYPD. Thus, most of the time, *uo_out can be driven for other purposes, most notably, driving
+// a 7-segment display or other LEDs. Since the values driven to PmodKYPD are driven a small fraction of
+// the time, they have a (hopefully) imperceptible impact on the LEDs.
+//
 // In:
 //   $_ready: Able to receive a button press. Drive @_first_stage+1.
-//   $_led_out: The chip output to PmodKYPD can be shared with led output values.
-//              Outputs will be drivn by PmodKYPD a small percentage of the time that is
-//              imperceptible to LEDs that share the output. This value is driven on $_pmod_out
-//              when PmodKYPD is not using them. Use 8'b0 if not used. Required @_first_stage.
 // Out:
 //   /_name$button_pressed: [boolean] Was a button/key pressed?
 //   /_name$digit_pressed[3:0]: The hex digit pressed if $button_pressed, held until the next $button_pressed.
+//   /_name$sample_row_mask: The input values for the Pmod (if /_name$sampling)
+//   /_name$sampling: The Pmod must be sampling (driven with /_name$pmod_in).
 // Params:
 //   /_top
 //   /_name
 //   @_first_stage: The first stage of logic in the pipeline.
-//   $_pmod_in: The name and range of the output signal that drives the Pmod input (and 7-segment output).
-//              This is driven in @_first_stage, and should drive *uo_out through one flop.
 //   $_pmod_out: The name and range of the input signal that receives the Pmod output.
 //               Should be driven in the same stage that drives *uo_out and receives *ui_in -- @_first_stage + 1).
 //   $_ready
-//   $_led_out
-\TLV PmodKYPD(/_top, /_name, @_first_stage, $_pmod_in, $_pmod_out, $_ready, $_led_out, $_debug, _where)
+//   _where: Visualization uses "where: {_where}."
+\TLV PmodKYPD(/_top, /_name, @_first_stage, $_pmod_out, $_ready, _where)
    /_name
       // Pipelined logic to poll the keypad.
       // Determine a fixed sequence of polling that will:
@@ -72,13 +78,11 @@
       // that have been reported while still pressed.
       @_first_stage
          $reset = /_top$reset;
-
+         
          // Run fast in Makerchip simulation.
-         m5_var(SeqWidth, m5_if(m5_MAKERCHIP, 4, 24))    /// 12 Number of bits counting one sample to the next. 22 for 1/4 sec per poll
-         m5_var(SampleWidth, m5_if(m5_MAKERCHIP, 2, 23))  /// 7 Number of bits counting sample window.
-         m5_var(FullSpeedSeqWidth, m5_if(m5_MAKERCHIP, 4, 17))    /// SeqWidth for full-speed operation.
-         m5_var(FullSpeedSampleWidth, m5_if(m5_MAKERCHIP, 2, 13)) /// SampleWidth for full-speed operation.
-
+         m5_var(SeqWidth, m5_if(m5_MAKERCHIP, 4, 17))    /// 12 Number of bits counting one sample to the next. 22 for 1/4 sec per poll
+         m5_var(SampleWidth, m5_if(m5_MAKERCHIP, 2, 13))  /// 7 Number of bits counting sample window.
+         
          // Sample once every 2^m5_SeqWidth cycles.
          // Sample input 2^m5_SampleWidth cycles after driving input.
          // When not driving outputs, drive $_led_out.
@@ -86,20 +90,14 @@
          // and when to sample keypad output.
          $Seq[m5_calc(m5_SeqWidth - 1 + 2):0] <=
             $reset ? 0 : $Seq + 1;
-         $sampling = /_top$_debug ? $Seq[m5_calc(         m5_SeqWidth - 1):         m5_SampleWidth] == m5_calc(         m5_SeqWidth -          m5_SampleWidth)'b0 :
-                                    $Seq[m5_calc(m5_FullSpeedSeqWidth - 1):m5_FullSpeedSampleWidth] == m5_calc(m5_FullSpeedSeqWidth - m5_FullSpeedSampleWidth)'b0;
-         $sample = $sampling &&
-                   (/_top$_debug ? $Seq[m5_calc(         m5_SampleWidth - 1):0] == ~          m5_SampleWidth'b0 :
-                                   $Seq[m5_calc(m5_FullSpeedSampleWidth - 1):0] == ~ m5_FullSpeedSampleWidth'b0);
-
+         $sampling = $Seq[m5_calc(m5_SeqWidth - 1):m5_SampleWidth] == m5_calc(m5_SeqWidth - m5_SampleWidth)'b0;
+         $sample = $sampling && ($Seq[m5_calc(m5_SampleWidth - 1):0] == ~m5_SampleWidth'b0);
+         
          // Update column keypad input.
          ?$sampling
-            $row_sel[1:0] = /_top$_debug ? $Seq[m5_calc(         m5_SeqWidth - 1 + 2):         m5_SeqWidth] :
-                                           $Seq[m5_calc(m5_FullSpeedSeqWidth - 1 + 2):m5_FullSpeedSeqWidth];
-         // Connect the Pmod to uo_out[3:0] and ui_in[3:0].
-         $_pmod_in = $sampling ? 4'b1 << $row_sel : /_top$_led_out;
+            $row_sel[1:0] = $Seq[m5_calc(m5_SeqWidth - 1 + 2):m5_SeqWidth];
+         $sample_row_mask[3:0] = 4'b1 << $row_sel;
       @m4_stage_eval(@_first_stage + 1)
-         
          ?$sample
             $row[3:0] = /_top$_pmod_out;  // A row of data from keypad, indexed by column.
          $sample_or_reset = $sample || $reset;
@@ -113,11 +111,10 @@
                          $row_sel == 2'h0 ? $row : $Button[3:0]};
          
          
-         
       //
       // Report pressed buttons (only once)
       //
-
+      
       // Check one button each cycle.
       // Use the same pipeline as polling, aligned so that $Button, $Reported, and $CheckButton update
       // at the same stage.
@@ -165,7 +162,6 @@
                      }
                   },
                   renderFill() {
-                    debugger
                     return '/_name$sampling'.asBool()
                         ? ('/_name$row_sel'.asInt() == this.getIndex("row") ? (('/_name$row'.asInt() >> this.getIndex("col")) & 1) != 0 ? "blue" : "cyan" : "black") :
                              "gray";
@@ -185,41 +181,16 @@
    |pipe
       @-1
          $reset = *reset || *ui_in[7];
-      @0
-         $debug = | *ui_in[6:4];
-      m5+PmodKYPD(|pipe, /keypad, @0, $uo_out_lower[3:0], $ui_in[3:0], 1'b1, $sseg_out[3:0], $debug, ['left: 40, top: 80, width: 20, height: 20'])
       
-      @1
-         // Several debug modes are supported.
-         // Use 3'b000 for normal operation.
-         // ui_in[4]: 0: output single button as digit; 1: output button mask
-         // ui_in[5]: if as mask: 0: buttons 0-15; 1: buttons 16-31
-         //           if as button: 0: normal operation; 1: debug output ($Buttons or $Reported)
-         // ui_in[6]: 0: output $Buttons; 1: output $Reported
-         $selected_mask[15:0] = $ui_in[6] ? /keypad$Reported : /keypad$Button;
-         
-         // Find $first button in $selected_mask.
-         /* verilator lint_off UNOPTFLAT */
-         /button[15:0]
-            /prev
-               $ANY = /button[#button - 1]$ANY;
-            $its_me = (#button == 0 || ! /prev$found) && |pipe$selected_mask[#button];
-            $found = (#button > 0 && /prev$found) || $its_me;
-            $first_index[3:0] = $its_me ? #button : #button == 0 ? 4'b0 : /prev$first_index;
-         $first[3:0] = /button[15]$first_index;
-         /* verilator lint_on UNOPTFLAT */
-         
-         $display_digit[3:0] =
-            $ui_in[5] ? /keypad$digits[($first * 4) +: 4] :
-                        /keypad$digit_pressed;
+      m5+PmodKYPD(|pipe, /keypad, @0, $ui_in[3:0], 1'b1, ['left: 40, top: 80, width: 20, height: 20'])
+      
       @2
-         m5+sseg_decoder($segments_n, $display_digit)
-      // Re-align output for 7-seg to combine with keypad input.
-         <<2$sseg_out[7:0] = $ui_in[4] ? {$ui_in[5] ? $selected_mask[15:8] : $selected_mask[7:0]} : {1'b0, ~ $segments_n};
-      @0
-         $uo_out[7:0] = {$sseg_out[7:4], /keypad$uo_out_lower};
+         m5+sseg_decoder($segments_n, /keypad$digit_pressed)
       @1
-         *uo_out = $uo_out;
+         // Re-align output for 7-seg to combine with keypad input.
+         $sseg_out[7:0] = {1'b0, ~ >>2$segments_n};
+         // Drive to PmodKYPD if sampling, otherwise, drive for 7-seg display.
+         *uo_out = /keypad$sampling ? {4'b0, /keypad$sample_row_mask} : $sseg_out;
          // Output goes to PmodKYPD, and PmodKYPD responds on *ui_in (with unknown delay, absorbed by sample window).
          $ui_in[7:0] = *ui_in;
          \viz_js
