@@ -177,7 +177,7 @@
 
          \viz_js
             where: {_where}
-\TLV my_design()
+\TLV example_PmodKYPD_design()
    |pipe
       @-1
          $reset = *reset || *ui_in[7];
