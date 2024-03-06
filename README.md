@@ -18,3 +18,10 @@ Special thanks also to the [Tiny Tapeout](https://tinytapeout.com/) team and tho
    - [RISC-V Decode Tables](https://docs.google.com/presentation/d/e/2PACX-1vTAavhqbL1q3VkRy5IMeGo0KduYC4boXcRuPcFEBQUfoBmmJh05hM4l_Sonq_WtB742lvJWxooy-Rkt/pub?start=false&loop=false&delayms=3000)
    - [Human CPU Cards](https://docs.google.com/presentation/d/e/2PACX-1vTC-oWp7n1XpPzps6FyRAojMMI1YbHwFh8xmGP6xDu9fCBMn9WDAInwxt5RZGFFYC3SGwtXqMJb9m4J/pub?start=false&loop=false&delayms=3000)
    - [Wokwi Digital Project Template](https://wokwi.com/projects/354858054593504257)
+
+## Communication
+
+ - Join/Open open-source-silicon.dev Slack workspace: https://join.slack.com/t/open-source-silicon/shared_invite/zt-2cy1yxy0j-ZWDXZwNXOoC_U~v7ZN4vKQ (use private class channel.
+ - Contact instructors:
+   - Steve Hoover: [LinkedIn](https://www.linkedin.com/in/steve-hoover-a44b607/), [email](mailto:steve.hoover@redwoodeda.com)
+   - Mohamed Kassem: [LinkedIn](https://www.linkedin.com/in/mkkassem), [email](mailto:mkk@efabless.com)
