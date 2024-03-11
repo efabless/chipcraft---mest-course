@@ -15,9 +15,9 @@ Final projects from ChipCraft 2 Crane:
 
   * Andrew N. Die roller: TBD
   * Max, Amada, Andrew: Calculator: TBD
-  * Brent, Bo, Lee: AES encryption: https://github.com/bogibso15/efabless-tt-fpga-dl-demo
+  * Brent, Bo, Lee: [AES encryption](https://github.com/bogibso15/efabless-tt-fpga-dl-demo)
   * Joel, Catherine: Traffic light controller: TBD
   * Isaac: Multiplier: TBD
   * Neal: Stopwatch: TBD
-  * Bryce, Grant, Shakhar: UART SHA encryption: 
-  * Tristan, Gabriel, Connor: Timer game: https://github.com/gabejessil/tt06-verilog-template
+  * Bryce, Grant, Shakhar: UART SHA encryption: TBD. Uses this [UART controller](https://github.com/alexforencich/verilog-uart).
+  * Tristan, Gabriel, Connor: [Timer game](https://github.com/gabejessil/tt06-verilog-template)
