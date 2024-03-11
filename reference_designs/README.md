@@ -1,6 +1,6 @@
 # Reference Designs for Makerchip Tiny Tapeout Projects
 
-This directory collects reference designs and starter templates that may be useful for final project and the Makerchip-based Tiny Tapeout ecosystem in general.
+This directory collects reference designs, starter templates, and past projects that may be useful for final project and the Makerchip-based Tiny Tapeout ecosystem in general.
 
 Here are some final projects from ChipCraft 1 AFRL OH:
 
