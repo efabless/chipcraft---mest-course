@@ -21,3 +21,4 @@ Final projects from ChipCraft 2 Crane:
   * Neal: Stopwatch: TBD
   * Bryce, Grant, Shakhar: UART SHA encryption: TBD. Uses this [UART controller](https://github.com/alexforencich/verilog-uart).
   * Tristan, Gabriel, Connor: [Timer game](https://github.com/gabejessil/tt06-verilog-template)
+  * Nathan G: Die roller: TBD
