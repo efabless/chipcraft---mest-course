@@ -12,7 +12,8 @@ Special thanks also to the [Tiny Tapeout](https://tinytapeout.com/) team and tho
    - [Calculator](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_calc_shell.tlv)
    - [CPU](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_riscv_shell.tlv)
    - [Empty Template for Final Projects](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_empty_template.tlv)
- - [Open reference solutions](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Freference_solutions.tlv) (Ctrl-Click for new tab)
+   - [Reference designs, other starter templates, and past projects](./reference_designs/README.md)
+ - [Reference solutions](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Freference_solutions.tlv) (Ctrl-Click for new tab)
  - Handouts
    - [Instructions for Programming Your FPGA and Taping Out Your ASIC](https://docs.google.com/document/d/e/2PACX-1vTCpb11-ZiFI2Xga6pHhZgTvN9GKuUFN9VTemRUJ-y3b5zR1dfbSRG_pTLokr0Cl9_lOpAwFZ21mowQ/pub)
    - [RISC-V Decode Tables](https://docs.google.com/presentation/d/e/2PACX-1vTAavhqbL1q3VkRy5IMeGo0KduYC4boXcRuPcFEBQUfoBmmJh05hM4l_Sonq_WtB742lvJWxooy-Rkt/pub?start=false&loop=false&delayms=3000)
