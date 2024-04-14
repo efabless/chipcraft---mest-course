@@ -16,18 +16,13 @@
    //-------------------------------------------------------
    // Build Target Configuration
    //
-   // To build within Makerchip for the FPGA or ASIC:
-   //   o Use first line of file: \m5_TLV_version 1d --inlineGen --noDirectiveComments --noline --clkAlways --bestsv --debugSigsYosys: tl-x.org
-   //   o set(MAKERCHIP, 0)
-   //   o var(target, FPGA)  // or ASIC
-   //set(MAKERCHIP, 0)   /// 1 (or commented out) for simulating in Makerchip.
-   var(my_design, tt_um_template)   /// The name of your top-level TT module, to match your info.yml.
+   var(my_design, tt_um_example)   /// The name of your top-level TT module, to match your info.yml.
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
    var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
                                    /// 0: Don't provide synchronization and debouncing.
-                                   /// m5_neq(m5_MAKERCHIP, 1): Debounce unless in Makerchip.
+                                   /// m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
    
    // ======================
    // Computed From Settings

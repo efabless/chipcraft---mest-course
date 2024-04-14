@@ -16,18 +16,14 @@
    //-------------------------------------------------------
    // Build Target Configuration
    //
-   // To build within Makerchip for the FPGA or ASIC:
-   //   o Use first line of file: \m5_TLV_version 1d --inlineGen --noDirectiveComments --noline --clkAlways --bestsv --debugSigsYosys: tl-x.org
-   //   o set(MAKERCHIP, 0)
-   //   o var(target, FPGA)  // or ASIC
-   //set(MAKERCHIP, 0)
-   var(my_design, tt_um_template)
+   var(my_design, tt_um_example)   /// The name of your top-level TT module, to match your info.yml.
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
+   var(in_fpga, 1)      /// 1 to include the demo board.
    var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
                                    /// 0: Don't provide synchronization and debouncing.
-                                   /// m5_neq(m5_MAKERCHIP, 1): Debounce unless in Makerchip.
+                                   /// m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
    
    // ======================
    // Computed From Settings
@@ -40,7 +36,7 @@
 \SV
    // Include Tiny Tapeout Lab.
    m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])
-
+   m4_include_lib(['https:/']['/raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/calculator_shell_lib.tlv'])
 
 \TLV calc()
    
@@ -56,12 +52,12 @@
    
    
    
-   
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
    *uo_out = 8'b0;
    m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
    m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
    
+   m5+cal_viz(@1, /fpga)
 \SV
 
 // ================================================
@@ -97,7 +93,7 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    // Instantiate the Tiny Tapeout module.
    m5_user_module_name tt(.*);
    
-   assign passed = top.cyc_cnt > 60;
+   assign passed = top.cyc_cnt > 80;
    assign failed = 1'b0;
 endmodule
 
@@ -132,9 +128,9 @@ module m5_user_module_name (
    m5+tt_connections()
    
    // Instantiate the Virtual FPGA Lab.
-   m5+board(/top, /fpga, 7, $, , calc)
+   m5_if(m5_in_fpga, ['m5+board(/top, /fpga, 7, $, , calc)'], ['m5+calc()'])
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   m5+tt_input_labels_viz(['"Value[0]", "Value[1]", "Value[2]", "Value[3]", "Op[0]", "Op[1]", "Op[2]", "="'])
+   m5_if(m5_in_fpga, ['m5+tt_input_labels_viz(['"Value[0]", "Value[1]", "Value[2]", "Value[3]", "Op[0]", "Op[1]", "Op[2]", "="'])'])
 
 \SV
 endmodule

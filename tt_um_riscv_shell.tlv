@@ -15,23 +15,18 @@
    //-------------------------------------------------------
    // Build Target Configuration
    //
-   // To build within Makerchip for the FPGA or ASIC:
-   //   o Use first line of file: \m5_TLV_version 1d --inlineGen --noDirectiveComments --noline --clkAlways --bestsv --debugSigsYosys: tl-x.org
-   //   o set(MAKERCHIP, 0)
-   //   o var(target, FPGA)  // or ASIC
-   //set(MAKERCHIP, 0)
-   var(my_design, tt_um_template)
+   var(my_design, tt_um_example)   /// The name of your top-level TT module, to match your info.yml.
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
-   // Input debouncing--not important for the CPU which has no inputs,but the setting is here for final projects based on the CPU.
+   var(in_fpga, 1)      /// 1 to include the demo board.
    var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
                                    /// 0: Don't provide synchronization and debouncing.
-                                   /// m5_neq(m5_MAKERCHIP, 1): Debounce unless in Makerchip.
+                                   /// m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
 
    // CPU configs
-   var(num_regs, 16)  // 32 for full reg file.
-   var(dmem_size, 8)  // Size of DMem, a power of 2.
+   var(num_regs, 16)  /// 32 for full reg file.
+   var(dmem_size, 8)  /// Size of DMem, a power of 2.
    
    
    // ======================
@@ -40,7 +35,7 @@
    
    // If debouncing, a user's module is within a wrapper, so it has a different name.
    var(user_module_name, m5_if(m5_debounce_inputs, my_design, m5_my_design))
-   var(debounce_cnt, m5_if_eq(m5_MAKERCHIP, 1, 8'h03, 8'hff))
+   var(debounce_cnt, m5_if_defined_as(MAKERCHIP, 1, 8'h03, 8'hff))
    
    
    // ==================
@@ -117,11 +112,11 @@
    //  o data memory
    //  o CPU visualization
    |cpu
-      //m4+imem(@1)    // Args: (read stage)
-      //m4+rf(@1, @1)  // Args: (read stage, write stage) - if equal, no register bypass is required
-      //m4+dmem(@4)    // Args: (read/write stage)
+      ///m5+imem(@1)    // Args: (read stage)
+      ///m5+rf(@1, @1)  // Args: (read stage, write stage) - if equal, no register bypass is required
+      ///m5+dmem(@4)    // Args: (read/write stage)
 
-   //m4+cpu_viz(@4)    // For visualisation, argument should be at least equal to the last stage of CPU logic. @4 would work for all labs.
+   ///m5+cpu_viz(@4)    // For visualization, argument should be at least equal to the last stage of CPU logic. @4 would work for all labs.
 
 \SV
 
@@ -180,9 +175,9 @@ module m5_user_module_name (
    m5+tt_connections()
    
    // Instantiate the Virtual FPGA Lab.
-   m5+board(/top, /fpga, 7, $, , cpu)
+   m5_if(m5_in_fpga, ['m5+board(/top, /fpga, 7, $, , cpu)'], ['m5+cpu()'])
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])
+   m5_if(m5_in_fpga, ['m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])'])
 
 \SV
 endmodule

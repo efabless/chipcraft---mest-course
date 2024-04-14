@@ -1,7 +1,7 @@
-\m4_TLV_version 1d: tl-x.org
+\m5_TLV_version 1d: tl-x.org
 \SV
    `include "sqrt32.v";
-   m4_makerchip_module
+   m5_makerchip_module
 \TLV
    |calc
       @1
@@ -13,7 +13,7 @@
          $cc[4:0] = sqrt($cc_sq);
          
          
-!  *passed = *cyc_cnt > 16'd30;
+   *passed = *cyc_cnt > 16'd30;
 
 \SV
    endmodule
