@@ -16,6 +16,7 @@
    |tb
       @0
          /default
+            $reset = *reset;
             $valid = ! m4_top|calc<>0$reset;
             \SV_plus
                always @(posedge clk) $$rand[31:0] <= \$random();
@@ -28,12 +29,12 @@
                            //    (*top.cyc_cnt > 15) ? $rand_op[2:0] :
                            //                          ((($rand_op[2:0] % 2) != 0) + ($rand_op[2:0] % 4)) )
                            : >>1$op;
-            $val1[7:0] = '0;
             $val2[7:0] = '0;
+            $equals_in = $rand[11];
             $out[7:0] = '0;
             $mem[8:0] = 9'h100;   // Indicates to VIZ that there is no memory.
             $dummy = 0;
-            `BOGUS_USE($out $mem $valid $val1 $val2 $dummy $rand1 $rand2)
+            `BOGUS_USE($reset $equals_in $out $mem $valid $val1 $val2 $dummy $rand1 $rand2)
       @_stage   
          $ANY = m4_top|calc<>0$ANY;
 
