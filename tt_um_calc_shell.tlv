@@ -2,7 +2,7 @@
 \m5
    use(m5-1.0)
    
-   
+
    // #################################################################
    // #                                                               #
    // #  Starting-Point Code for MEST Course Tiny Tapeout Calculator  #
@@ -20,10 +20,12 @@
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
-   var(in_fpga, 1)      /// 1 to include the demo board.
-   var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
-                                   /// 0: Don't provide synchronization and debouncing.
-                                   /// m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
+   var(in_fpga, 1)   /// 1 to include the demo board.
+   var(debounce_inputs, m5_if_defined_as(MAKERCHIP, 1, 0, 1))
+                     /// Legal values:
+                     ///   1: Provide synchronization and debouncing on all input signals.
+                     ///   0: Don't provide synchronization and debouncing.
+                     ///   m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
    
    // ======================
    // Computed From Settings
@@ -35,11 +37,11 @@
 
 \SV
    // Include Tiny Tapeout Lab.
-   m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])
-   m4_include_lib(['https:/']['/raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/calculator_shell_lib.tlv'])
+   m4_include_lib(https:/['']/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv)
+   // Calculator VIZ.
+   m4_include_lib(https:/['']/raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/calculator_shell_lib.tlv)
 
 \TLV calc()
-   
    
    
    // ==================
@@ -51,13 +53,14 @@
    // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
    
    
+
+   m5+cal_viz(@1, /fpga)
    
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
    *uo_out = 8'b0;
    m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
    m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
    
-   m5+cal_viz(@1, /fpga)
 \SV
 
 // ================================================
@@ -76,20 +79,6 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    logic ena = 1'b0;
    logic rst_n = ! reset;
    
-   /*
-   // Or, to provide specific inputs at specific times (as for lab C-TB) ...
-   // BE SURE TO COMMENT THE ASSIGNMENT OF INPUTS ABOVE.
-   // BE SURE TO DRIVE THESE ON THE B-PHASE OF THE CLOCK (ODD STEPS).
-   // Driving on the rising clock edge creates a race with the clock that has unpredictable simulation behavior.
-   initial begin
-      #1  // Drive inputs on the B-phase.
-         ui_in = 8'h0;
-      #10 // Step 5 cycles, past reset.
-         ui_in = 8'hFF;
-      // ...etc.
-   end
-   */
-
    // Instantiate the Tiny Tapeout module.
    m5_user_module_name tt(.*);
    
