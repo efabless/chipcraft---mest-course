@@ -6,6 +6,9 @@ This repository contains materials for the course: ["ChipCraft: The Art of Chip 
 
  - [Syllabus](https://docs.google.com/document/d/e/2PACX-1vT9sxLEmr5tBJa-iqrIkl3nRzpzeFxQqTq3HO2Ca641V6OKlTUJm3Xs8_QXYUcJNSR9KJfd8P1-gGXK/pub)
  - [Slides](https://docs.google.com/presentation/d/e/2PACX-1vS-X870FJyy7gevhSd2psd8hwL1_3W2rjy0-mIzEDr7QKOiMzueRHcI8IfzGTtL6wUN1MGgFsciAgce/pub?start=false&loop=false&delayms=3000)
+ - [Nandgame](https://nandgame.com)
+ - [Wokwi Starting Template for Tiny Tapeout](https://wokwi.com/projects/354858054593504257)
+ - [Matt Venn's "Microchip Manufacturing - How computer chips get made!" Video](https://www.youtube.com/watch?v=aBDJQ9NYTEU)
  - Starting-point code for:
    - [Calculator](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_calc_shell.tlv)
    - [CPU](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_riscv_shell.tlv)
@@ -17,3 +20,10 @@ This repository contains materials for the course: ["ChipCraft: The Art of Chip 
    - [Human CPU Cards](https://docs.google.com/presentation/d/e/2PACX-1vTC-oWp7n1XpPzps6FyRAojMMI1YbHwFh8xmGP6xDu9fCBMn9WDAInwxt5RZGFFYC3SGwtXqMJb9m4J/pub?start=false&loop=false&delayms=3000)
    - [Wokwi Digital Project Template](https://wokwi.com/projects/354858054593504257)
 
+## Credits
+
+ - [National Micro-Electronics Security Training Center](https://mestcenter.org/) Offers this and many other courses.
+ - [Efabless](https://efabless.com): Delivers this course and the chipIgnite Shuttle program, which, in collaboration with Google and Skywater, provides low-cost silicon tapeouts.
+ - [Tiny Tapeout](https://tinytapeout.com/): Enables an ultra-low-cost path to silicon leveraging the chipIgnite Shuttle program including the Wokwi-based design environment, build flows, and boards (designed by [Psychogenic Technologies](https://psychogenic.com/)) that are used in this course.
+ - [Redwood EDA](https://redwoodeda.com): Provides course instruction, content, and the Makerchip platform for TL-Verilog-based design.
+ - Hundreds of open-source contributors responsible for the open-source EDA tools and flows utilized in this course.
