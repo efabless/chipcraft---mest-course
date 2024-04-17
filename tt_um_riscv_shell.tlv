@@ -19,7 +19,7 @@
    var(target, FPGA)  /// FPGA or ASIC
    //-------------------------------------------------------
    
-   var(in_fpga, 1)      /// 1 to include the demo board.
+   var(in_fpga, 1)   /// 1 to include the demo board. (Note: Logic will be under /fpga_pins/fpga.)
    var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
                                    /// 0: Don't provide synchronization and debouncing.
                                    /// m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
@@ -169,15 +169,17 @@ module m5_user_module_name (
 
    wire reset = ! rst_n;
    
-\TLV
-   /* verilator lint_off UNOPTFLAT */
+\TLV tt_lab()
    // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
    m5+tt_connections()
-   
    // Instantiate the Virtual FPGA Lab.
-   m5_if(m5_in_fpga, ['m5+board(/top, /fpga, 7, $, , cpu)'], ['m5+cpu()'])
+   m5+board(/top, /fpga, 7, $, , cpu)
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   m5_if(m5_in_fpga, ['m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])'])
+   m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])
+
+\TLV
+   /* verilator lint_off UNOPTFLAT */
+   m5_if(m5_in_fpga, ['m5+tt_lab()'], ['m5+cpu()'])
 
 \SV
 endmodule

@@ -17,7 +17,7 @@
    // ----------------------------------
    
    // Provide the Lab ID given at the lower right of the slide.
-   var(LabId, DONE)
+   var(LabId, C-OUT)
    
    
    var(my_design, tt_um_template)
@@ -97,7 +97,7 @@
    })
    
    if(m5_CalcLab, [
-      define_labs(C-PIPE, C-EQUALS, C-OUT, C-IN, C-2CYC, C-VALID, C-MEM, C-TB, C-MEM2-DISABLED)
+      define_labs(C-PIPE, C-OUT, C-IN, C-EQUALS, C-2CYC, C-VALID, C-MEM, C-TB, C-MEM2-DISABLED)
       define_lab()
       set(input_labels, ['"Value[0]", "Value[1]", "Value[2]", "Value[3]", "Op[0]", "Op[1]", "Op[2]", "="'])
       
@@ -156,12 +156,6 @@
    m5+call(m5_if(m5_CalcLab, calc_solution, cpu_solution))
 
 \TLV calc_solution()
-   //!!!!! DELETE ME !!!!!!!!
-   |tb
-      @0
-         /default
-            $equals_in = $rando;
-   
    |calc
    
       // ============================================================================================================
@@ -177,10 +171,9 @@
          $equals_in = *ui_in[7];
       '])
       @1
-         //$reset = *reset;
          $val1[7:0] = >>m5_OUTPUT_STAGE$out;
          m5_if(m5_reached(C-IN), [''], ['$val2[7:0] = m5_if(m5_reached(C-OUT), ['8'b1'], ['{5'b0, $rand2[2:0]}']);'])
-         m5_if(m5_Lab == m5_lab_num(C-OUT), ['$op[1:0] = 2'b01;'])
+         m5_if(m5_Lab == m5_lab_num(C-OUT), ['$op[1:0] = 2'b00;'])
          m4_ifelse_block(m5_reached(C-EQUALS), 1, ['
          $valid = $reset ? 1'b0 :
                            $equals_in && ! >>1$equals_in;
@@ -196,8 +189,7 @@
       
       
       m4_ifelse_block(m5_reached(C-VALID), 1, ['
-         $reset_or_valid = $valid || $reset;
-      ?$reset_or_valid
+      ?$valid
          @1
             $sum[7:0] = $val1 + $val2;
             $diff[7:0] = $val1 - $val2;
@@ -225,7 +217,7 @@
                      m5_if(m5_reached(C-MEM), ['($op == 3'b011) ? $quot :'], ['                      $quot;'])
                      m5_if(m5_reached(C-MEM), ['($op == 3'b100) ? >>2$mem : >>1$out;'])
       m4_ifelse_block(m5_reached(C-OUT), 1, ['
-      @3
+      m5_if(m5_reached(C-2CYC), @3, @1)
          $digit[3:0] = $out[3:0];
          *uo_out =
             $digit == 4'h0 ? 8'b00111111 :

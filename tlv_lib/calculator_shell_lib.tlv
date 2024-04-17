@@ -34,7 +34,7 @@
             $out[7:0] = '0;
             $mem[8:0] = 9'h100;   // Indicates to VIZ that there is no memory.
             $dummy = 0;
-            `BOGUS_USE($reset $equals_in $out $mem $valid $val1 $val2 $dummy $rand1 $rand2)
+            `BOGUS_USE($reset $equals_in $out $mem $valid $val2 $dummy $rand1 $rand2)
       @_stage   
          $ANY = m4_top|calc<>0$ANY;
 

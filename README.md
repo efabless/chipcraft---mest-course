@@ -13,6 +13,7 @@ Special thanks also to the [Tiny Tapeout](https://tinytapeout.com/) team and tho
  - [Matt Venn's "Microchip Manufacturing - How computer chips get made!" Video](https://www.youtube.com/watch?v=aBDJQ9NYTEU)
  - Starting-point code for:
    - [Calculator](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_calc_shell.tlv)
+   - [Calculator in Module 4](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_calc_module4.tlv)
    - [CPU](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_riscv_shell.tlv)
    - [Empty Template for Final Projects](https://mest.makerchip.com/sandbox?code_url=https:%2F%2Fraw.githubusercontent.com%2Fefabless%2Fchipcraft---mest-course%2Fmain%2Ftt_um_empty_template.tlv)
    - [Reference designs, other starter templates, and past projects](./reference_designs/README.md)
