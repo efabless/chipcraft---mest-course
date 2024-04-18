@@ -58,6 +58,15 @@
    m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
    m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
 
+// Set up the Tiny Tapeout lab environment.
+\TLV tt_lab()
+   // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
+   m5+tt_connections()
+   // Instantiate the Virtual FPGA Lab.
+   m5+board(/top, /fpga, 7, $, , my_design)
+   // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
+   m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])
+
 \SV
 
 // ================================================
@@ -122,17 +131,17 @@ module m5_user_module_name (
 );
    wire reset = ! rst_n;
 
-\TLV tt_lab()
-   // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
-   m5+tt_connections()
-   // Instantiate the Virtual FPGA Lab.
-   m5+board(/top, /fpga, 7, $, , my_design)
-   // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])
-
 \TLV
    /* verilator lint_off UNOPTFLAT */
    m5_if(m5_in_fpga, ['m5+tt_lab()'], ['m5+my_design()'])
+
+\SV_plus
+   
+   // ==========================================
+   // If you are using Verilog for your design,
+   // your Verilog logic goes here.
+   // Note, output assignments are in my_design.
+   // ==========================================
 
 \SV
 endmodule

@@ -1,4 +1,4 @@
-# ChipCraft: The Art of Chip Design for Non-Experts
+# ChipCraft: The Art of Chip Design
 
 This repository contains materials for the course: ["ChipCraft: The Art of Chip Design for Non-Experts"](https://mestcenter.org/training/chipcraft/), offered by the [National Micro-Electronics Security Training Center](https://mestcenter.org/) in partnership with [Efabless](https://efabless.com) and [Redwood EDA](https://redwoodeda.com).
 
