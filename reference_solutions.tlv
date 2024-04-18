@@ -34,7 +34,7 @@
    default_var(my_design, m5_if(m5_CalcLab, tt_um_calc, tt_um_riscv_cpu)) /// Change to tt_um_<your-github-username>_riscv_cpu. (See Tiny Tapeout repo README.md.)
    var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
                                    /// 0: Don't provide synchronization and debouncing.
-                                   /// m5_neq(m5_MAKERCHIP, 1): Debounce unless in Makerchip.
+                                   /// m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
    // CPU configs
    var(num_regs, 16)  // 32 for full reg file.
    var(dmem_size, 8)  // A power of 2.
@@ -42,7 +42,7 @@
    
    // If debouncing, a user's module is within a wrapper, so it has a different name.
    var(user_module_name, m5_if(m5_debounce_inputs, my_design, m5_my_design))
-   var(debounce_cnt, m5_if_eq(m5_MAKERCHIP, 1, 8'h03, 8'hff))
+   var(debounce_cnt, m5_if_defined_as(MAKERCHIP, 1, 8'h03, 8'hff))
 
 \SV
    // Include Tiny Tapeout Lab.
@@ -728,7 +728,7 @@
    m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
    m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
    
-   m5_if(m5_MAKERCHIP, ['m4+cpu_viz(@4)'])    // For visualisation, argument should be at least equal to the last stage of CPU logic. @4 would work for all labs.
+   m5_if_defined_as(MAKERCHIP, 1, ['m4+cpu_viz(@4)'])    // For visualisation, argument should be at least equal to the last stage of CPU logic. @4 would work for all labs.
 
 //----------------
 \SV
@@ -741,9 +741,9 @@
 module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, output logic passed, output logic failed);
    // Tiny tapeout I/O signals.
    logic [7:0] ui_in, uo_out;
-   m5_if_neq(m5_target, FPGA, ['logic [7:0]uio_in,  uio_out, uio_oe;'])
+   m5_if_neq(m5_target, FPGA, ['logic [7:0] uio_in, uio_out, uio_oe;'])
    m5_if(m5_CalcLab, ['logic [31:0] r;'])
-   m5_if(m5_CalcLab, ['always @(posedge clk) r <= m5_if(m5_MAKERCHIP, ['$urandom()'], ['0']);'])
+   m5_if(m5_CalcLab, ['always @(posedge clk) r <= m5_if_defined_as(MAKERCHIP, 1, ['$urandom()'], ['0']);'])
    m5_if_eq(m5_LabId, C-TB, [''], ['assign ui_in = m5_ui_in_expr;'])
    m5_if_neq(m5_target, FPGA, ['assign uio_in = 8'b0;'])
    logic ena = 1'b0;

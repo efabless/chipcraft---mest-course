@@ -64,7 +64,7 @@
    @_stage
 
 \TLV cpu_viz(@_stage)
-   m4_ifelse_block(m5_MAKERCHIP, 1, ['
+   m4_ifelse_block(m5_if_defined_as(MAKERCHIP, 1, 1, 0), 1, ['
    m4_ifelse_block(m4_sp_graph_dangerous, 1, [''], ['
    |cpu
       /imem[m5_calc(m5_NUM_INSTRS-1):0]   // Declare it in case these is no imem.
