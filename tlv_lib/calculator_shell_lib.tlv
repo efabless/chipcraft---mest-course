@@ -17,7 +17,7 @@
       @0
          /default
             $reset = *reset;
-            $valid = ! m4_top|calc<>0$reset;
+            $valid = ! $reset;
             \SV_plus
                always @(posedge clk) $$rand[31:0] <= \$random();
             $rand_op[2:0] = $rand[2:0];

@@ -16,7 +16,7 @@
    // Build Target Configuration
    //
    var(my_design, tt_um_example)   /// The name of your top-level TT module, to match your info.yml.
-   var(target, FPGA)  /// FPGA or ASIC
+   var(target, ASIC)   /// Note, the FPGA CI flow will set this to FPGA.
    //-------------------------------------------------------
    
    var(in_fpga, 1)   /// 1 to include the demo board. (Note: Logic will be under /fpga_pins/fpga.)

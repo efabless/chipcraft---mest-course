@@ -255,7 +255,7 @@
    m5_define_hier(IMEM, m5_NUM_INSTRS)
    
    |cpu
-      @0
+      @1
          $reset = *reset;
       
       
