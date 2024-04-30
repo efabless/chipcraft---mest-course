@@ -26,7 +26,7 @@ Special thanks also to the [Tiny Tapeout](https://tinytapeout.com/) team and tho
 
 ## Communication
 
- - [Join/Open open-source-silicon.dev Slack workspace](https://join.slack.com/t/open-source-silicon/shared_invite/zt-2c9f63e7o-qTuD2jN9u0gcH8BAAzzJeQ) (use private class channel.
+ - [Join/Open open-source-silicon.dev Slack workspace](https://join.slack.com/t/open-source-silicon/shared_invite/zt-2hyirm2ro-3Fme4Ua6CXDo89JEYHo5MQ) (use private class channel.
  - Contact instructors:
    - Steve Hoover: [LinkedIn](https://www.linkedin.com/in/steve-hoover-a44b607/), [email](mailto:steve.hoover@redwoodeda.com)
    - Mohamed Kassem: [LinkedIn](https://www.linkedin.com/in/mkkassem), [email](mailto:mkk@efabless.com)
