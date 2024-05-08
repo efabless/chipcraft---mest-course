@@ -685,16 +685,19 @@
                            >>3$valid ;
       '], m5_valid_style, 2, ['
       @3
-         $valid = !(>>1$valid_taken_br || >>2$valid_taken_br);
+         $valid = $reset ? 1'b0 :
+                           !(>>1$valid_taken_br || >>2$valid_taken_br);
       '], m5_valid_style, 3, ['
       @3
-         $valid = !(>>1$valid_taken_br || >>2$valid_taken_br ||
-                    >>1$valid_load     || >>2$valid_load);
+         $valid = $reset ? 1'b0 :
+                           !(>>1$valid_taken_br || >>2$valid_taken_br ||
+                             >>1$valid_load     || >>2$valid_load);
       '], m5_valid_style, 4, ['
       @3
-         $valid = !(>>1$valid_taken_br || >>2$valid_taken_br ||
-                    >>1$valid_load     || >>2$valid_load     ||
-                    >>1$valid_jump     || >>2$valid_jump);
+         $valid = $reset ? 1'b0 :
+                           !(>>1$valid_taken_br || >>2$valid_taken_br ||
+                             >>1$valid_load     || >>2$valid_load     ||
+                             >>1$valid_jump     || >>2$valid_jump);
       '])
       
       @1
