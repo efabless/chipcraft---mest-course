@@ -470,7 +470,7 @@
       @4
          $dmem_wr_en          = $is_s_instr && $valid;
          $dmem_wr_data[31:0]  = $src2_value;
-         $dmem_rd_en          = $is_load;
+         $dmem_rd_en          = $valid_load;
          $dmem_addr[2:0]      = $result[4:2];
          
       @5
