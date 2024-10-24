@@ -22,7 +22,6 @@ Special thanks also to the [Tiny Tapeout](https://tinytapeout.com/) team and tho
    - [Instructions for Programming Your FPGA and Taping Out Your ASIC](https://docs.google.com/document/d/e/2PACX-1vTCpb11-ZiFI2Xga6pHhZgTvN9GKuUFN9VTemRUJ-y3b5zR1dfbSRG_pTLokr0Cl9_lOpAwFZ21mowQ/pub)
    - [RISC-V Decode Tables](https://docs.google.com/presentation/d/e/2PACX-1vTAavhqbL1q3VkRy5IMeGo0KduYC4boXcRuPcFEBQUfoBmmJh05hM4l_Sonq_WtB742lvJWxooy-Rkt/pub?start=false&loop=false&delayms=3000)
    - [Human CPU Cards](https://docs.google.com/presentation/d/e/2PACX-1vTC-oWp7n1XpPzps6FyRAojMMI1YbHwFh8xmGP6xDu9fCBMn9WDAInwxt5RZGFFYC3SGwtXqMJb9m4J/pub?start=false&loop=false&delayms=3000)
-   - [Wokwi Digital Project Template](https://wokwi.com/projects/354858054593504257)
 
 ## Communication
 
