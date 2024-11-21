@@ -21,8 +21,8 @@
             \SV_plus
                always @(posedge clk) $$rand[31:0] <= \$random();
             $rand_op[2:0] = $rand[2:0];
-            $rand1[3:0] = $rand[6:3];
-            $rand2[3:0] = $rand[10:7];
+            $rand1[4:0] = $rand[7:3];
+            $rand2[3:0] = $rand[11:8];  // Current course uses [2:0], previously [3:0].
             $op[2:0] = ((*top.cyc_cnt % 2) != 0)
                            ? $rand_op[2:0]
                            //? ( (*top.cyc_cnt > 33) ? ($rand_op[2:0] % 2) :

@@ -22,3 +22,11 @@ Final projects from ChipCraft 2 Crane:
   * Bryce, Grant, Shakhar: UART SHA encryption: TBD. Uses this [UART controller](https://github.com/alexforencich/verilog-uart).
   * Tristan, Gabriel, Connor: [Timer game](https://github.com/gabejessil/tt06-verilog-template)
   * Nathan G: [Die roller](https://github.com/nathangross1/tt06-verilog-template)
+
+Tiny Tapeout 7 Submissions:
+  * [The_Chairman_send_receive](https://github.com/TinyTapeout/tinytapeout-07/tree/main/projects/tt_um_The_Chairman_send_receive)
+  * [agurrier_mastermind](https://github.com/TinyTapeout/tinytapeout-07/tree/main/projects/tt_um_agurrier_mastermind)
+  * [ajstein_stopwatch](https://github.com/TinyTapeout/tinytapeout-07/tree/main/projects/tt_um_ajstein_stopwatch)
+  * [riscv_spi_wrapper](https://github.com/TinyTapeout/tinytapeout-07/tree/main/projects/tt_um_riscv_spi_wrapper)
+  * [seanyen0_SIMON](https://github.com/TinyTapeout/tinytapeout-07/tree/main/projects/tt_um_seanyen0_SIMON)
+  * [template](https://github.com/TinyTapeout/tinytapeout-07/tree/main/projects/tt_um_template)
