@@ -98,7 +98,7 @@
    })
    
    if(m5_CalcLab, [
-      define_labs(C-PIPE, C-OUT, C-IN, C-EQUALS, C-2CYC, C-VALID, C-MEM, C-TB, C-MEM2-DISABLED)
+      define_labs(C-PIPE, C-OUT, C-IN, C-EQUALS, C-2CYC, C-VALID, C-MEM, C-TB, C-MEM2-DISABLED)   /// Note C-TB and C-MEM2-DISABLED labs are no longer part of course.
       define_lab()
       set(input_labels, ['"Value[0]", "Value[1]", "Value[2]", "Value[3]", "Op[0]", "Op[1]", "Op[2]", "="'])
       
@@ -470,7 +470,7 @@
       @4
          $dmem_wr_en          = $is_s_instr && $valid;
          $dmem_wr_data[31:0]  = $src2_value;
-         $dmem_rd_en          = $is_load;
+         $dmem_rd_en          = $valid_load;
          $dmem_addr[2:0]      = $result[4:2];
          
       @5
@@ -685,16 +685,19 @@
                            >>3$valid ;
       '], m5_valid_style, 2, ['
       @3
-         $valid = !(>>1$valid_taken_br || >>2$valid_taken_br);
+         $valid = $reset ? 1'b0 :
+                           !(>>1$valid_taken_br || >>2$valid_taken_br);
       '], m5_valid_style, 3, ['
       @3
-         $valid = !(>>1$valid_taken_br || >>2$valid_taken_br ||
-                    >>1$valid_load     || >>2$valid_load);
+         $valid = $reset ? 1'b0 :
+                           !(>>1$valid_taken_br || >>2$valid_taken_br ||
+                             >>1$valid_load     || >>2$valid_load);
       '], m5_valid_style, 4, ['
       @3
-         $valid = !(>>1$valid_taken_br || >>2$valid_taken_br ||
-                    >>1$valid_load     || >>2$valid_load     ||
-                    >>1$valid_jump     || >>2$valid_jump);
+         $valid = $reset ? 1'b0 :
+                           !(>>1$valid_taken_br || >>2$valid_taken_br ||
+                             >>1$valid_load     || >>2$valid_load     ||
+                             >>1$valid_jump     || >>2$valid_jump);
       '])
       
       @1
