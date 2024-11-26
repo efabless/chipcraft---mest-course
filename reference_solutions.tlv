@@ -21,7 +21,6 @@
    
    
    var(my_design, tt_um_template)
-   var(target, FPGA)  /// FPGA or ASIC
    
    
    // ================================================
@@ -30,28 +29,41 @@
    if_ndef(MAKERCHIP, ['set(MAKERCHIP, 0)'])
    // Is this a calculator lab?
    var(CalcLab, m5_if_regex(m5_LabId, ^\(C\)-, (C), 1, 0))
-   // ---SETTINGS---
+
+   // ========
+   // Settings
+   // ========
+   
    default_var(my_design, m5_if(m5_CalcLab, tt_um_calc, tt_um_riscv_cpu)) /// Change to tt_um_<your-github-username>_riscv_cpu. (See Tiny Tapeout repo README.md.)
-   var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
-                                   /// 0: Don't provide synchronization and debouncing.
-                                   /// m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
+   var(debounce_inputs, 0)
+          /// Legal values:
+          ///   1: Provide synchronization and debouncing on all input signals.
+          ///   0: Don't provide synchronization and debouncing.
+          ///   m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
+
    // CPU configs
    var(num_regs, 16)  // 32 for full reg file.
    var(dmem_size, 8)  // A power of 2.
-   // --------------
+
+   // ======================
+   // Computed From Settings
+   // ======================
    
    // If debouncing, a user's module is within a wrapper, so it has a different name.
    var(user_module_name, m5_if(m5_debounce_inputs, my_design, m5_my_design))
    var(debounce_cnt, m5_if_defined_as(MAKERCHIP, 1, 8'h03, 8'hff))
 
 \SV
+   // =================
+   // Include Libraries
+   // =================
+
    // Include Tiny Tapeout Lab.
    m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])
    m4_include_lib(https:/['']/raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/m5_if(m5_CalcLab, calculator_shell_lib.tlv, risc-v_shell_lib.tlv))
    
    // Solutions
    ///m4_include_makerchip_hidden(['mest_course_solutions.private.tlv'])
-//----------------
 \m5
    ///use(m5-1.0)
    
@@ -246,8 +258,8 @@
    
    // Connect Tiny Tapeout outputs.
    // (*uo_out connected above.)
-   m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
-   m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
+   *uio_out = 8'b0;
+   *uio_oe = 8'b0;
 
 \TLV cpu_solution()
    m5+riscv_gen()
@@ -726,10 +738,10 @@
    // ============================================================================================================
    
    // Connect Tiny Tapeout outputs.
-   // Note that my_design will be under /fpga_pins/fpga.
+   // Note that pipesignals assigned here can be found under /fpga_pins/fpga (if in_fpga is set to 1 above).
    *uo_out = {6'b0, *failed, *passed};
-   m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
-   m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
+   *uio_out = 8'b0;
+   *uio_oe = 8'b0;
    
    m5_if_defined_as(MAKERCHIP, 1, ['m4+cpu_viz(@4)'])    // For visualisation, argument should be at least equal to the last stage of CPU logic. @4 would work for all labs.
 
@@ -743,12 +755,11 @@
 
 module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, output logic passed, output logic failed);
    // Tiny tapeout I/O signals.
-   logic [7:0] ui_in, uo_out;
-   m5_if_neq(m5_target, FPGA, ['logic [7:0] uio_in, uio_out, uio_oe;'])
+   logic [7:0] ui_in, uio_in, uo_out, uio_out, uio_oe;
    m5_if(m5_CalcLab, ['logic [31:0] r;'])
    m5_if(m5_CalcLab, ['always @(posedge clk) r <= m5_if_defined_as(MAKERCHIP, 1, ['$urandom()'], ['0']);'])
    m5_if_eq(m5_LabId, C-TB, [''], ['assign ui_in = m5_ui_in_expr;'])
-   m5_if_neq(m5_target, FPGA, ['assign uio_in = 8'b0;'])
+   assign uio_in = 8'b0;
    logic ena = 1'b0;
    logic rst_n = ! reset;
    
@@ -789,11 +800,9 @@ m5_if(m5_debounce_inputs, ['m5_tt_top(m5_my_design)'])
 module m5_user_module_name (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
-    m5_if_eq(m5_target, FPGA, ['/']['*'])   // The FPGA is based on TinyTapeout 3 which has no bidirectional I/Os (vs. TT6 for the ASIC).
     input  wire [7:0] uio_in,   // IOs: Bidirectional Input path
     output wire [7:0] uio_out,  // IOs: Bidirectional Output path
     output wire [7:0] uio_oe,   // IOs: Bidirectional Enable path (active high: 0=input, 1=output)
-    m5_if_eq(m5_target, FPGA, ['*']['/'])
     input  wire       ena,      // will go high when the design is enabled
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
@@ -801,9 +810,11 @@ module m5_user_module_name (
    m5_if(m5_CalcLab, [''], ['logic passed, failed;  // Connected to uo_out[0] and uo_out[1] respectively, which connect to Makerchip passed/failed.'])
 
    wire reset = ! rst_n;
-   
-\TLV
-   /* verilator lint_off UNOPTFLAT */
+
+   // List all potentially-unused inputs to prevent warnings
+   wire _unused = &{ena, clk, rst_n, 1'b0};
+
+\TLV tt_lab()
    // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
    m5+tt_connections()
    

@@ -12,17 +12,14 @@
    // Settings
    // ========
    
-   //-------------------------------------------------------
-   // Build Target Configuration
-   //
    var(my_design, tt_um_example)   /// The name of your top-level TT module, to match your info.yml.
-   var(target, ASIC)   /// Note, the FPGA CI flow will set this to FPGA.
-   //-------------------------------------------------------
+   var(debounce_inputs, 0)
+          /// Legal values:
+          ///   1: Provide synchronization and debouncing on all input signals.
+          ///   0: Don't provide synchronization and debouncing.
+          ///   m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
+   var(in_fpga, 1)   /// For Makerchip development: 1 to include the demo board in VIZ (in which case, logic will be under /fpga_pins/fpga).
    
-   var(in_fpga, 1)   /// 1 to include the demo board. (Note: Logic will be under /fpga_pins/fpga.)
-   var(debounce_inputs, 0)         /// 1: Provide synchronization and debouncing on all input signals.
-                                   /// 0: Don't provide synchronization and debouncing.
-                                   /// m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
 
    // CPU configs
    var(num_regs, 16)  /// 32 for full reg file.
@@ -36,7 +33,7 @@
    // If debouncing, a user's module is within a wrapper, so it has a different name.
    var(user_module_name, m5_if(m5_debounce_inputs, my_design, m5_my_design))
    var(debounce_cnt, m5_if_defined_as(MAKERCHIP, 1, 8'h03, 8'hff))
-   
+
    
    // ==================
    // Sum 1 to 9 Program
@@ -68,9 +65,15 @@
       '])
    })
    
+
 \SV
-   // Include Tiny Tapeout Lab.
+   // =================
+   // Include Libraries
+   // =================
+
+   // Tiny Tapeout Lab.
    m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])  
+   // RISC-V CPU VIZ.
    m4_include_lib(['https://raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/risc-v_shell_lib.tlv'])
 
 
@@ -91,7 +94,7 @@
       // |                |
       // ==================
       
-      // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
+      // Note that pipesignals assigned here can be found under /fpga_pins/fpga (if in_fpga is set to 1 above).
       
       
       
@@ -103,8 +106,8 @@
    
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
    *uo_out = {6'b0, *failed, *passed};
-   m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
-   m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
+   *uio_out = 8'b0;
+   *uio_oe = 8'b0;
    
    // Macro instantiations to be uncommented when instructed for:
    //  o instruction memory
@@ -127,10 +130,11 @@
 
 module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, output logic passed, output logic failed);
    // Tiny tapeout I/O signals.
-   logic [7:0] ui_in, uo_out;
-   m5_if_neq(m5_target, FPGA, ['logic [7:0] uio_in, uio_out, uio_oe;'])
-   assign ui_in = 8'b0;
-   m5_if_neq(m5_target, FPGA, ['assign uio_in = 8'b0;'])
+   logic [7:0] ui_in, uio_in, uo_out, uio_out, uio_oe;
+   logic [31:0] r;  // a random value
+   always @(posedge clk) r <= m5_if_defined_as(MAKERCHIP, 1, ['$urandom()'], ['0']);
+   assign ui_in = r[7:0];
+   assign uio_in = 8'b0;
    logic ena = 1'b0;
    logic rst_n = ! reset;
    
@@ -156,11 +160,9 @@ m5_if(m5_debounce_inputs, ['m5_tt_top(m5_my_design)'])
 module m5_user_module_name (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
-    m5_if_eq(m5_target, FPGA, ['/']['*'])   // The FPGA is based on TinyTapeout 3 which has no bidirectional I/Os (vs. TT6 for the ASIC).
     input  wire [7:0] uio_in,   // IOs: Bidirectional Input path
     output wire [7:0] uio_out,  // IOs: Bidirectional Output path
     output wire [7:0] uio_oe,   // IOs: Bidirectional Enable path (active high: 0=input, 1=output)
-    m5_if_eq(m5_target, FPGA, ['*']['/'])
     input  wire       ena,      // will go high when the design is enabled
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
@@ -168,7 +170,10 @@ module m5_user_module_name (
    logic passed, failed;  // Connected to uo_out[0] and uo_out[1] respectively, which connect to Makerchip passed/failed.
 
    wire reset = ! rst_n;
-   
+
+   // List all potentially-unused inputs to prevent warnings
+   wire _unused = &{ena, 1'b0};
+
 \TLV tt_lab()
    // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
    m5+tt_connections()
