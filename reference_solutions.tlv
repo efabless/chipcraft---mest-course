@@ -814,7 +814,7 @@ module m5_user_module_name (
    // List all potentially-unused inputs to prevent warnings
    wire _unused = &{ena, clk, rst_n, 1'b0};
 
-\TLV tt_lab()
+\TLV
    // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
    m5+tt_connections()
    
