@@ -779,7 +779,7 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    '])
 
    // Instantiate the Tiny Tapeout module.
-   m5_user_module_name tt(.*);
+   m5_my_design tt(.*);
    
    assign passed = m5_if(m5_CalcLab, ['top.cyc_cnt > 80'], ['uo_out[0]']);
    assign failed = m5_if(m5_CalcLab, ['1'b0'],             ['uo_out[1]']);

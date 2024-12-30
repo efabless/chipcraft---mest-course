@@ -139,7 +139,7 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    logic rst_n = ! reset;
    
    // Instantiate the Tiny Tapeout module.
-   m5_user_module_name tt(.*);
+   m5_my_design tt(.*);
    
    // Passed/failed to control Makerchip simulation, passed from Tiny Tapeout module's uo_out pins.
    assign passed = uo_out[0];
