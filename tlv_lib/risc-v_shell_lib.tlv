@@ -75,9 +75,9 @@
          $ANY = m5_cpu_viz_top|cpuviz/defaults<>0$ANY;
          `BOGUS_USE($dummy)
          /m5_XREG_HIER
-            $ANY = cpu_viz_top|cpuviz/defaults/xreg<>0$ANY;
+            $ANY = m5_cpu_viz_top|cpuviz/defaults/xreg<>0$ANY;
          /m5_DMEM_HIER
-            $ANY = cpu_viz_top|cpuviz/defaults/dmem<>0$ANY;
+            $ANY = m5_cpu_viz_top|cpuviz/defaults/dmem<>0$ANY;
    // String representations of the instructions for debug.
    \SV_plus
       logic [40*8-1:0] instr_strs [0:m5_NUM_INSTRS];
