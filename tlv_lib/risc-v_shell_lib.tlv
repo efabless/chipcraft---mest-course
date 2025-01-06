@@ -87,7 +87,7 @@
    |cpuviz
       @1
          /imem[m5_calc(m5_NUM_INSTRS-1):0]
-            $instr[31:0] = cpu_viz_top|cpu/imem<>0$instr;
+            $instr[31:0] = m5_cpu_viz_top|cpu/imem<>0$instr;
             $instr_str[40*8-1:0] = *instr_strs[imem];
             \viz_js
                box: {width: 500, height: 18, strokeWidth: 0},
