@@ -72,12 +72,12 @@
       // for pulling default viz signals into CPU
       // and then back into viz
       @0
-         $ANY = /fpga|cpuviz/defaults<>0$ANY;
+         $ANY = m5_cpu_viz_top|cpuviz/defaults<>0$ANY;
          `BOGUS_USE($dummy)
          /m5_XREG_HIER
-            $ANY = /fpga|cpuviz/defaults/xreg<>0$ANY;
+            $ANY = cpu_viz_top|cpuviz/defaults/xreg<>0$ANY;
          /m5_DMEM_HIER
-            $ANY = /fpga|cpuviz/defaults/dmem<>0$ANY;
+            $ANY = cpu_viz_top|cpuviz/defaults/dmem<>0$ANY;
    // String representations of the instructions for debug.
    \SV_plus
       logic [40*8-1:0] instr_strs [0:m5_NUM_INSTRS];
@@ -87,7 +87,7 @@
    |cpuviz
       @1
          /imem[m5_calc(m5_NUM_INSTRS-1):0]
-            $instr[31:0] = /fpga|cpu/imem<>0$instr;
+            $instr[31:0] = cpu_viz_top|cpu/imem<>0$instr;
             $instr_str[40*8-1:0] = *instr_strs[imem];
             \viz_js
                box: {width: 500, height: 18, strokeWidth: 0},
