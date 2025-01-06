@@ -13,6 +13,7 @@
    // ========
    
    var(my_design, tt_um_example)   /// The name of your top-level TT module, to match your info.yml.
+   var(target, TT10) /// Use "FPGA" for TT03 Demo Boards (without bidirectional I/Os).
    var(debounce_inputs, 0)
           /// Legal values:
           ///   1: Provide synchronization and debouncing on all input signals.
@@ -72,7 +73,7 @@
    // =================
 
    // Tiny Tapeout Lab.
-   m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv'])  
+   m4_include_lib(['https:/']['/raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/5744600215af09224b7235479be84c30c6e50cb7/tlv_lib/tiny_tapeout_lib.tlv'])  
    // RISC-V CPU VIZ.
    m4_include_lib(['https://raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/risc-v_shell_lib.tlv'])
 
