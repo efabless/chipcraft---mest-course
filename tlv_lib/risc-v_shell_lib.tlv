@@ -64,8 +64,8 @@
    @_stage
 
 \TLV cpu_viz(@_stage)
-   m5_var(cpu_viz_top, m5_if_defined_as(in_fpga, 0, ['/top'], ['/fpga']))
    m4_ifelse_block(m5_if_defined_as(MAKERCHIP, 1, 1, 0), 1, ['
+   m5_var(cpu_viz_top, m5_if_defined_as(in_fpga, 0, ['/top'], ['/fpga']))
    m4_ifelse_block(m4_sp_graph_dangerous, 1, [''], ['
    |cpu
       /imem[m5_calc(m5_NUM_INSTRS-1):0]   // Declare it in case these is no imem.
@@ -173,7 +173,7 @@
          m4_define(['m4_modified_mnemonic_expr'], ['m4_patsubst(m5_mnemonic_expr, ['_instr'], [''])'])
          $mnemonic[10*8-1:0] = m4_modified_mnemonic_expr $is_load ? "LOAD      " : $is_s_instr ? "STORE     " : "ILLEGAL   ";
          \viz_js
-            box: {left: -470, top: -20, width: 1070, height: 1000, strokeWidth: 0},
+            box: {left: -470, top: -20, width: 1070, height: 1000, strokeWidth: 0 m5_if_defined_as(in_fpga, 0, [', fill: "#363638"'], [''])},
             render() {
                //
                // PC instr_mem pointer
