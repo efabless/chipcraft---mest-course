@@ -64,6 +64,7 @@
    @_stage
 
 \TLV cpu_viz(@_stage)
+   m5_var(cpu_viz_top, m5_if_defined_as(in_fpga, 0, ['/top'], ['/fpga']))
    m4_ifelse_block(m5_if_defined_as(MAKERCHIP, 1, 1, 0), 1, ['
    m4_ifelse_block(m4_sp_graph_dangerous, 1, [''], ['
    |cpu
@@ -158,14 +159,14 @@
             
             $dummy[0:0]          = 1'b0;
       @_stage
-         $ANY = /fpga|cpu<>0$ANY;
+         $ANY = m5_cpu_viz_top|cpu<>0$ANY;
          
          /m5_XREG_HIER
-            $ANY = /fpga|cpu/xreg<>0$ANY;
+            $ANY = m5_cpu_viz_top|cpu/xreg<>0$ANY;
             `BOGUS_USE($dummy)
          
          /m5_DMEM_HIER
-            $ANY = /fpga|cpu/dmem<>0$ANY;
+            $ANY = m5_cpu_viz_top|cpu/dmem<>0$ANY;
             `BOGUS_USE($dummy)
 
          // m5_mnemonic_expr is build for WARP-V signal names, which are slightly different. Correct them.
