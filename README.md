@@ -7,7 +7,7 @@ Special thanks also to the [Tiny Tapeout](https://tinytapeout.com/) team and tho
 ## Course Materials
 
  - [Syllabus](https://docs.google.com/document/d/e/2PACX-1vT9sxLEmr5tBJa-iqrIkl3nRzpzeFxQqTq3HO2Ca641V6OKlTUJm3Xs8_QXYUcJNSR9KJfd8P1-gGXK/pub)
- - [Slides](https://docs.google.com/presentation/d/e/2PACX-1vS-X870FJyy7gevhSd2psd8hwL1_3W2rjy0-mIzEDr7QKOiMzueRHcI8IfzGTtL6wUN1MGgFsciAgce/pub?start=false&loop=false&delayms=3000)
+ - Slides: [Module 3](https://docs.google.com/presentation/d/17ctZD-gHXFlU03IZZ0Dbc-aH2YY1D13o7YgOl1N6DQ4/edit?usp=drive_link), [Module 4](https://docs.google.com/presentation/d/1mKBFVprQJWcsPi-_Ju5wqdUxLBBlh7d-a2nCKeKjesk/edit?usp=drive_link), [Module 5](https://docs.google.com/presentation/d/18zO9s9kR_WQ0Sn02BQNoRovYTYbqLMzoPKBstPiz1UU/edit?usp=drive_link)
  - [Nandgame](https://nandgame.com)
  - [Wokwi Starting Template for Tiny Tapeout](https://wokwi.com/projects/354858054593504257)
  - [Matt Venn's "Microchip Manufacturing - How computer chips get made!" Video](https://www.youtube.com/watch?v=aBDJQ9NYTEU)
