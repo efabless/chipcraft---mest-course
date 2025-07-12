@@ -10,6 +10,8 @@
    define_hier(XREG, m5_num_regs)
    default_var(dmem_size, 8)
    define_hier(DMEM, m5_dmem_size)
+   // A hack to address the fact that the videos reference M4_ macros.
+   eval(['m4_define(['M4_IMEM_INDEX_CNT'], ['m5_IMEM_INDEX_CNT'])'])
 \SV
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/warp-v_includes/450357b4993fa480e7fca57dc346e39cba21b6bc/risc-v_defs.tlv'])
 
